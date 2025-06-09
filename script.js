@@ -1,45 +1,46 @@
-let currentColor='#223030';
-let experienceCount=0;
-let educationCount=0;
-let skills=[];
+<script>
+  let currentSlide = 0;
+  const totalSlides = 3;
+  const carousel = document.getElementById("templateCarousel");
+  const indicators = document.querySelectorAll(".indicator");
 
-document.addEventListener('DOMContentLoaded',funtion(){
-    
-    initializeBuilder();
-});
+  function updateCarousel() {
+    const offset = -currentSlide * 100;
+    carousel.style.transform = `translateX(${offset}%)`;
 
-function initializeBuilder(){
-    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
-        anchor.addEventListener('click',funtion(e){
-            e.preventDefault();
-            const target=document.querySelector(this.getAttribut('href'));
-            if(target){
-                target.scrollIntoView({
-                    behaviour:'smooth',
-                    block:'start'
-                });
-            }
-        });
+    indicators.forEach((dot, index) => {
+      dot.classList.toggle("active", index === currentSlide);
     });
-}
+  }
 
+  function moveCarousel(direction) {
+    currentSlide += direction;
 
-function goToBuilder(){
-    document.getElementById('homepage').style.display='none';
-    document.getElementById('builderpage').style.display='block';
-
-    /*if(experienceCount==0)
-    {
-        addExperience();
+    if (currentSlide < 0) {
+      currentSlide = totalSlides - 1;
+    } else if (currentSlide >= totalSlides) {
+      currentSlide = 0;
     }
-    if(educationCount==0)
-    {
-        addEducation();
-    }*/
-}
 
-function goBackHome() {
-    document.getElementById('homePage').style.display = 'block';
-    document.getElementById('builderPage').style.display = 'none';
-}
+    updateCarousel();
+  }
 
+  function goToSlide(index) {
+    currentSlide = index;
+    updateCarousel();
+  }
+
+  // Swipe support (optional)
+  let startX = 0;
+  carousel.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+  });
+  carousel.addEventListener("touchend", (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    if (diff > 50) moveCarousel(1);
+    else if (diff < -50) moveCarousel(-1);
+  });
+
+  updateCarousel();
+</script>
