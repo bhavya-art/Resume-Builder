@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
     color: #333;
 }
 
@@ -15,6 +15,173 @@ body {
     width: 100%;
     gap: 1rem;
     padding: 1rem;
+}
+/* Exact customization panel styles matching the image */
+.customization-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    margin: 1rem;
+    margin-bottom: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #a0aec0;
+}
+
+.customization-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #a0aec0;
+}
+
+.customization-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.settings-icon {
+    font-size: 1.2rem;
+}
+
+.customization-section {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.customization-section:last-child {
+    border-bottom: none;
+}
+
+.section-label {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+/* Color Palette - Exact from image */
+.color-palette {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.color-option.active {
+    border-color: #2d3748;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.color-option.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Font Dropdown - Exact from image */
+.font-dropdown {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #a0aec0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3748;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234b5563' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+.font-dropdown:focus {
+    outline: none;
+    border-color: #118df0;
+    box-shadow: 0 0 0 3px rgba(17, 141, 240, 0.1);
+}
+
+.font-dropdown:hover {
+    border-color: #bd5e0;
+}
+
+/* Font Size Control - Exact from image */
+.font-size-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.font-size-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #a0aec0;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.font-size-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #118df0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.font-size-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.font-size-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #118df0;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.font-size-display {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1rem;
+    min-width: 40px;
+    text-align: center;
 }
 
 /* Left Panel - Form */
@@ -34,9 +201,9 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 2rem 2rem 1rem;
-    border-bottom: 2px solid #f3f4f6;
-    background: linear-gradient(135deg, #223030 0%, #523D35 100%);
-    color: white;
+    border-bottom: 2px solid #d1d5db;
+    background: rgb(33, 32, 32);
+    color: rgb(19, 17, 17);
     border-radius: 15px 15px 0 0;
     margin: 0;
 }
@@ -100,7 +267,7 @@ body {
 }
 
 .form-section h3 {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     margin-bottom: 1.5rem;
     color: #223030;
     font-weight: 600;
@@ -158,7 +325,7 @@ body {
 .form-group small {
     display: block;
     margin-top: 0.25rem;
-    color: #6b7280;
+    color: #4b5563;
     font-size: 0.8rem;
 }
 
@@ -169,7 +336,7 @@ body {
 
 /* Photo Upload Section */
 .photo-section {
-    background: #f8f9fa;
+    background: #d1d5db;
     padding: 1rem;
     border-radius: 10px;
     border: 2px dashed #e5e7eb;
@@ -202,7 +369,7 @@ body {
 
 .photo-placeholder:hover {
     border-color: #223030;
-    background: #f9fafb;
+    background: #e5e7eb;
 }
 
 .photo-placeholder span {
@@ -213,7 +380,7 @@ body {
 .photo-placeholder p {
     margin: 0;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #4b5563;
 }
 
 #profilePhoto {
@@ -336,6 +503,24 @@ body {
     background: rgba(255,255,255,0.2);
 }
 
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .color-palette {
+        gap: 0.5rem;
+    }
+    
+    .color-option {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .customization-section {
+        padding: 1rem;
+    }
+}
+
 /* Right Panel - Preview */
 .right-panel {
     width: 60%;
@@ -367,7 +552,7 @@ body {
 }
 
 .action-btn {
-    background: #6b7280;
+    background: #4b5563;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -420,7 +605,7 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     text-align: center;
     font-size: 0.85rem;
-    color: #6b7280;
+    color: #4b5563;
     align-self: center;
 }
 
@@ -479,7 +664,7 @@ body {
 }
 
 .resume-name {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
     color: #111827;
@@ -489,7 +674,7 @@ body {
 
  .resume-contact {
       font-size: 1rem;
-      color: #6b7280;
+      color: #4b5563;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -543,7 +728,6 @@ body {
 .project-item {
     margin-bottom: 1.5rem;
     padding: 1rem;
-    background: #f9fafb;
     border-radius: 0 8px 8px 0;
 }
 
@@ -561,7 +745,7 @@ body {
 }
 
 .item-date {
-    color: #6b7280;
+    color: #4b5563;
     font-size: 0.9rem;
     font-weight: 500;
     padding: 0.2rem 0.5rem;
@@ -611,7 +795,7 @@ body {
 
 .timeline-placeholder {
     text-align: center;
-    color: #6b7280;
+    color: #4b5563;
     font-style: italic;
     margin: 2rem 0;
 }
@@ -622,7 +806,7 @@ body {
     gap: 1rem;
     margin-bottom: 1rem;
     padding: 0.75rem;
-    background: #f9fafb;
+    background: #e5e7eb;
     border-radius: 8px;
     border-left: 4px solid #223030;
 }
@@ -649,65 +833,218 @@ body {
 }
 
 .timeline-company {
-    color: #6b7280;
+    color: #4b5563;
     font-size: 0.9rem;
 }
 
 /* Template Styles */
+
+/* Professional Template - Like attached image */
 .template-professional {
-    font-family: 'Georgia', serif;
+    font-family: 'Times New Roman', serif;
+    line-height: 1.4;
+}
+
+.template-professional .resume-name {
+    font-size: 2.8rem;
+    text-align: center;
+    color: #2c3e50;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    letter-spacing: 1px;
+}
+
+.template-professional .resume-contact {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #34495e;
+    margin-bottom: 1.5rem;
+    justify-content: center;
 }
 
 .template-professional .resume-section h3 {
-    border-bottom-color: #1f2937;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    border-bottom: 2px solid #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    text-align: left;
 }
 
 .template-professional .experience-item,
 .template-professional .education-item,
 .template-professional .project-item {
-    border-left-color: #1f2937;
+    border-left: none;
+    background: none;
+    padding: 0.5rem 0;
+    margin-bottom: 1.2rem;
 }
 
+.template-professional .item-title {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.template-professional .item-company,
+.template-professional .item-institution {
+    font-style: italic;
+    color: #2c3e50;
+    font-weight: normal;
+}
+
+.template-professional .item-date {
+    color: #7f8c8d;
+    font-weight: normal;
+}
+
+.template-professional .resume-section p,
+.template-professional .resume-section li {
+    color: #2c3e50;
+    font-size: 0.95rem;
+    text-align: justify;
+}
+
+/* Modern Template - Clean and Simple */
 .template-modern {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .template-modern .resume-name {
     color: #3b82f6;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.template-modern .resume-contact {
+    color: #64748b;
 }
 
 .template-modern .resume-section h3 {
     color: #1e40af;
     border-bottom-color: #3b82f6;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
 }
 
 .template-modern .experience-item,
 .template-modern .education-item,
 .template-modern .project-item {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
     border-left-color: #3b82f6;
-    background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
 }
 
+.template-modern .item-title {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.template-modern .item-company,
+.template-modern .item-institution {
+    color: #475569;
+}
+
+.template-modern .item-date {
+    color: #64748b;
+}
+
+.template-modern .skills-container span {
+    background: linear-gradient(135deg, #3b82f6, #1e40af);
+    color: white;
+    border-radius: 15px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 500;
+}
+
+/* Minimal Template - Center aligned headings */
 .template-minimal {
     font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #374151;
 }
 
 .template-minimal .resume-name {
     color: #111827;
     font-weight: 300;
+    text-align: center;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+}
+
+.template-minimal .resume-contact {
+    text-align: center;
+    justify-content: center;
+    color: #6b7280;
+    font-size: 0.9rem;
 }
 
 .template-minimal .resume-section h3 {
     color: #374151;
+    border: none;
+    font-weight: 300;
+    font-size: 1.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid #d1d5db;
-    font-weight: 400;
+    position: relative;
+}
+
+.template-minimal .resume-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: #9ca3af;
 }
 
 .template-minimal .experience-item,
 .template-minimal .education-item,
 .template-minimal .project-item {
-    border-left-color: #9ca3af;
-    background: #f9fafb;
+    border-left: none;
+    background: none;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: 1rem;
+}
+
+.template-minimal .item-title {
+    font-weight: 400;
+    color: #111827;
+}
+
+.template-minimal .item-company,
+.template-minimal .item-institution {
+    color: #6b7280;
+    font-weight: 300;
+}
+
+.template-minimal .item-date {
+    color: #9ca3af;
+    font-weight: 300;
+}
+
+.template-minimal .skills-container span {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    padding: 0.3rem 0.8rem;
+    font-weight: 300;
 }
 
 
@@ -763,7 +1100,7 @@ body {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #6b7280;
+    color: #4b5563;
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -774,7 +1111,7 @@ body {
 }
 
 .modal-close:hover {
-    background: #f3f4f6;
+    background: #d1d5db;
 }
 
 .modal-body p {

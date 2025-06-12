@@ -27,7 +27,46 @@
                         </select>
                     </div>
                 </div>
+                <!-- Exact customization panel as shown in image -->
+<div class="customization-panel">
+    <div class="customization-header">
+        
+        <h3>Customize Your Resume</h3>
+    </div>
+    
+    <div class="customization-section">
+        <label class="section-label">Theme Color</label>
+        <div class="color-palette">
+            <div class="color-option" style="background: #ef5a52;" onclick="setThemeColor('#ef5a52', '#dc2626')" data-color="#ef5a52"></div>
+            <div class="color-option" style="background: #ff8c42;" onclick="setThemeColor('#ff8c42', '#ea580c')" data-color="#ff8c42"></div>
+            <div class="color-option" style="background: #ffd23f;" onclick="setThemeColor('#ffd23f', '#d97706')" data-color="#ffd23f"></div>
+            <div class="color-option" style="background: #06d6a0;" onclick="setThemeColor('#06d6a0', '#059669')" data-color="#06d6a0"></div>
+            <div class="color-option" style="background: #118df0;" onclick="setThemeColor('#118df0', '#2563eb')" data-color="#118df0"></div>
+            <div class="color-option" style="background: #8b5fbf;" onclick="setThemeColor('#8b5fbf', '#7c3aed')" data-color="#8b5fbf"></div>
+            <div class="color-option active" style="background: #2d3748;" onclick="setThemeColor('#2d3748', '#1a202c')" data-color="#2d3748"></div>
+            <div class="color-option" style="background: #718096;" onclick="setThemeColor('#718096', '#4a5568')" data-color="#718096"></div>
+        </div>
+    </div>
 
+    <div class="customization-section">
+        <label class="section-label">Font:</label>
+        <select class="font-dropdown" id="fontSelector" onchange="setFont(this.value)">
+            <option value="'Segoe UI', sans-serif" selected>Segoe UI</option>
+            <option value="'Inter', sans-serif">Inter</option>
+            <option value="'Roboto', sans-serif">Roboto</option>
+            <option value="'Poppins', sans-serif">Poppins</option>
+            
+        </select>
+    </div>
+
+    <div class="customization-section">
+        <label class="section-label">Font Size:</label>
+        <div class="font-size-control">
+            <input type="range" min="12" max="20" value="14" class="font-size-slider" id="fontSizeRange" oninput="setFontSize(this.value)">
+            <span class="font-size-display" id="fontSizeDisplay">14</span>
+        </div>
+    </div>
+</div>
                 <div class="form-section">
                     <h3>Personal Information</h3>
                     
@@ -47,6 +86,7 @@
                                 <label class="photo-toggle">
                                     <input type="checkbox" id="showPhotoInResume" onchange="updatePreview()" checked>
                                     <span>Show photo in resume</span>
+                                    <small>*Max file size 5Mb</small>
                                 </label>
                             </div>
                         </div>
@@ -136,7 +176,7 @@
                 </div>
 
                 <div class="preview-area">
-                    <div class="resume-container template-professional" id="resumePreview">
+                    <div class="resume-container" id="resumePreview">
                         <!-- Header -->
                         <div class="resume-header">
                             <div class="header-content">

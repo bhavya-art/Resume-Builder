@@ -17,7 +17,7 @@ body{
     padding: 0 2rem;
 }
 
-/*Header*/
+/* Header */
 header{
     background:linear-gradient(135deg, #223030 0%, #523D35 100%);
     color:white;
@@ -27,16 +27,17 @@ header{
     top:0;
     z-index:1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    height: 80px; /* Fixed height for consistency */
 }
 
 .nav-container{
     display:flex;
     align-items: center;
     justify-content:space-between;
+    height: 100%;
 }
 
 .logo{
-   
     display:flex;
     align-items: center;
     font-size:1.8rem;
@@ -67,7 +68,7 @@ nav a{
 }
 
 nav a:hover{
-    color: #223030;
+    color: #BBA58F;
 }
 
 .start-btn{
@@ -75,6 +76,7 @@ nav a:hover{
     padding:0.7rem 1.5rem;
     border-radius: 25px;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .start-btn:hover{
@@ -82,21 +84,32 @@ nav a:hover{
     transform:translateY(-2px);
     box-shadow: 0 5px 15px rgba(187,165,143,0.4);
 }
-/*Main content*/
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Main content */
 .hero{
     background:linear-gradient(135deg, #223030 0%, #523D35 100%);
     color:white;
-    padding:250px 0 100px;
+    padding:140px 0 100px; /* Adjusted for fixed header height */
     min-height:100vh;
     display:flex;
-    align-items: centre;
+    align-items: center;
 }
 
 .hero-content{
     display:grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20 rem;
-    align-items: centre;
+    gap: 2rem;
+    align-items: center;
 }
 
 .hero-text h1{
@@ -124,7 +137,7 @@ nav a:hover{
     cursor: pointer;
 }
 
-.cta-button:hover {
+.cta-btn:hover {
     background: #959D90;
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(187,165,143,0.4);
@@ -171,7 +184,7 @@ nav a:hover{
 }
 
 .resume-preview .subtitle{
-    color: #666;
+    color: #444;
     font-size: 0.9rem;
     margin-bottom: 15px;
 }
@@ -189,7 +202,7 @@ nav a:hover{
 
 .resume-preview .content-line {
     height: 8px;
-    background: #f0f0f0;
+    background: #d0d0d0;
     margin-bottom: 5px;
     border-radius: 4px;
 }
@@ -218,7 +231,7 @@ nav a:hover{
     text-align: center;
     padding: 2rem;
     border-radius: 15px;
-    background: #EFEFEF;
+    background: #d9d9d9;
     transition: transform 0.3s ease;
 }
 
@@ -232,11 +245,11 @@ nav a:hover{
 }
 
 .feature-card p {
-    color: #666;
+    color: #444;
 }
 
 .templates{
-    background-color: #EFEFEF;
+    background-color: #d9d9d9;
     padding-top: 40px;
     padding-bottom: 20px;
 }
@@ -249,7 +262,7 @@ nav a:hover{
 .section-subtitle {
     text-align: center;
     font-size: 1.1rem;
-    color: #666;
+    color: #444;
     margin-bottom: 3rem;
 }
 .carousel {
@@ -264,7 +277,6 @@ nav a:hover{
   transition: transform 0.5s ease;
 }
 
-
 .template-card {
   min-width: 100%;
   box-sizing: border-box;
@@ -275,9 +287,8 @@ nav a:hover{
   transition: transform 0.3s ease;
 }
 
-
 .template-preview {
-  background: #cac8c8;
+  background: #a3a1a1;
   padding: 2rem;
   text-align: center;
 }
@@ -301,7 +312,7 @@ nav a:hover{
 }
 
 .template-info p {
-  color: #666;
+  color: #444;
   margin-bottom: 1rem;
   line-height: 1.6;
 }
@@ -339,7 +350,7 @@ nav a:hover{
 }
 
 .carousel-btn:hover {
-  background: #e0e0e0;
+  background: #bdbdbd;
 }
 
 .carousel-btn.prev {
@@ -350,20 +361,64 @@ nav a:hover{
   right: 10px;
 }
 
+.how-it-works {
+  background-color: #e5e5e5;
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 5rem;
+}
 
-/*About Section*/
+.how-heading {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #666163;
+  margin-bottom: 3rem;
+}
 
+.step {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 3rem;
+  gap: 2rem;
+}
+
+.step-image img {
+  max-width: 100%;
+  width: 400px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.step-text {
+  flex: 1;
+  min-width: 280px;
+}
+
+.step-text h2 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.step-text p {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* About Section */
 .about {
     padding: 80px 0;
     background: white;
-    
 }
+
 .about .container{
     display: flex;
     justify-content: space-between;
-    align-items: centre;
+    align-items: center;
     flex-wrap: wrap; 
-    
     padding: 0 2rem;
 }
 
@@ -381,16 +436,11 @@ nav a:hover{
   height: auto;
   object-fit: contain;
   border-radius: 2px;
-  
 }
-
 
 .about-content {
     flex: 1 1 55%;
-  min-width: 250px;
-}
-
-.about-content {
+    min-width: 250px;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 4rem;
@@ -405,7 +455,7 @@ nav a:hover{
 
 .about-intro {
     font-size: 1.2rem;
-    color: #666;
+    color: #444;
     margin-bottom: 2rem;
     line-height: 1.7;
 }
@@ -422,11 +472,11 @@ nav a:hover{
 }
 
 .about-feature p {
-    color: #666;
+    color: #444;
     line-height: 1.6;
 }
 
-/*Footer*/
+/* Footer */
 footer {
     background: #223030;
     color: white;
@@ -435,14 +485,16 @@ footer {
 
 .footer-content {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
     margin-bottom: 2rem;
 }
 
 .footer-logo {
     font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 1rem;
 }
 
 .footer-logo::before {
@@ -450,32 +502,68 @@ footer {
     margin-right: 0.5rem;
 }
 
-.github-link {
+/* Social Links */
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: white;
     text-decoration: none;
-    align-items: right;
-    gap: 0.5rem;
+    font-size: 1rem;
     transition: color 0.3s ease;
 }
 
-.github-link:hover {
+.social-link:hover {
     color: #BBA58F;
 }
 
-.github-link::before {
-    content: "";
-    font-size: 1.2rem;
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Footer Bottom */
 .footer-bottom {
     text-align: center;
     padding-top: 2rem;
     border-top: 1px solid #523D35;
-    color: #ccc;
+    color: #bbb;
+    font-size: 0.9rem;
 }
 
-/* Small devices (phones) */
+/* RESPONSIVE DESIGN */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    .hero-content {
+        gap: 1.5rem;
+    }
+    
+    .resume-preview {
+        margin-left: 100px;
+    }
+    
+    .about-content {
+        gap: 2rem;
+    }
+}
+
+/* Mobile Large (768px and below) */
 @media (max-width: 768px) {
+    /* Header adjustments */
+    header {
+        height: auto;
+        min-height: 80px;
+        padding: 0.5rem 0;
+    }
+    
     .nav-container {
         flex-direction: column;
         align-items: flex-start;
@@ -486,42 +574,42 @@ footer {
         flex-direction: column;
         gap: 1rem;
         width: 100%;
-        padding-top: 1rem;
     }
 
+    /* Hero section */
     .hero {
-        padding: 150px 1.5rem 60px;
-        flex-direction: column;
+        padding: 140px 1.5rem 60px; /* Adjusted top padding for mobile header */
     }
 
     .hero-content {
         grid-template-columns: 1fr;
         gap: 2rem;
-    }
-
-    .hero-text h1 {
-        font-size: 2.2rem;
-    }
-
-    .cta-btn {
-        width: 100%;
         text-align: center;
     }
 
-    .resume-preview {
-        margin-top: 2rem;
+    .hero-text h1 {
+        font-size: 2.5rem;
     }
 
+    .hero-text p {
+        font-size: 1.1rem;
+    }
+
+    .resume-preview {
+        margin-left: 0;
+        margin: 2rem auto 0;
+        width: 280px;
+        height: 360px;
+    }
+
+    /* Other sections */
     .features-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .carousel {
         max-width: 90%;
-    }
-
-    .template-preview img {
-        max-width: 100%;
     }
 
     .about .container {
@@ -543,6 +631,7 @@ footer {
     .start-btn {
         width: 100%;
         text-align: center;
+        margin-top: 1rem;
     }
 
     .carousel-btn {
@@ -551,4 +640,114 @@ footer {
     }
 }
 
+/* Mobile Small (480px and below) */
+@media (max-width: 480px) {
+    /* Header */
+    header {
+        padding: 0.5rem 0;
+    }
+    
+    .nav-container {
+        padding: 0 1rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    nav ul {
+        gap: 0.8rem;
+    }
 
+    /* Hero */
+    .hero {
+        padding: 120px 1rem 40px;
+    }
+    
+    .hero-text h1 {
+        font-size: 2rem;
+        line-height: 1.1;
+    }
+
+    .hero-text p {
+        font-size: 1rem;
+    }
+    
+    .cta-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .resume-preview {
+        width: 100%;
+        max-width: 260px;
+        height: 320px;
+        padding: 15px;
+    }
+
+    /* Steps section */
+    .step {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .step-image img {
+        width: 100%;
+        height: auto;
+    }
+
+    /* About content */
+    .about-content {
+        padding: 0 1rem;
+    }
+    
+    .about-text h2 {
+        font-size: 2rem;
+    }
+
+    /* Templates */
+    .template-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .template-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .carousel-btn {
+        top: 35%;
+        font-size: 1.2rem;
+        padding: 0.2rem 0.5rem;
+    }
+    
+    /* Sections */
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .how-heading {
+        font-size: 2rem;
+    }
+}
+
+/* Extra small devices (320px and below) */
+@media (max-width: 320px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .hero-text h1 {
+        font-size: 1.8rem;
+    }
+    
+    .resume-preview {
+        width: 100%;
+        max-width: 240px;
+        height: 300px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+}

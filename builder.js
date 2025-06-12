@@ -1,3 +1,6 @@
+let isSaved = true;
+let currentThemeColor = currentThemeColor || '#2563eb';  // fallback blue
+
 // Initialize the builder
 document.addEventListener('DOMContentLoaded', function() {
     handleTemplateFromURL();
@@ -39,28 +42,31 @@ function applyTemplate(templateClass) {
 }
 
 
-// Handle template selection from URL
 function handleTemplateFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const template = urlParams.get('template');
-    
+
     if (template) {
         const templateMap = {
             'modern': 'template-modern',
-            'executive': 'template-professional', 
             'minimal': 'template-minimal',
-            
+            'executive': 'template-professional'
         };
-        
-        const templateClass = templateMap[template] || 'template-professional';
-        
-        const templateSelect = document.getElementById('templateSelect');
-        if (templateSelect) {
-            templateSelect.value = templateClass;
-            applyTemplate(templateClass);
+
+        const templateClass = templateMap[template] || 'template-modern';
+
+        const resumePreview = document.getElementById("resume-preview");
+        if (resumePreview) {
+            resumePreview.className = "resume-preview"; // Reset
+            resumePreview.classList.add(templateClass); // Apply selected
         }
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    handleTemplateFromURL();
+});
+
 
 // Photo Upload Functionality
 function handlePhotoUpload(event) {
@@ -301,7 +307,7 @@ function renderExperiences() {
         if (title || company || description) {
             anyContent = true;
             const experienceHTML = `
-                <div class="experience-item slide-up" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 8px; word-wrap: break-word; overflow-wrap: break-word;">
+                <div class="experience-item slide-up" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; word-wrap: break-word; overflow-wrap: break-word;">
                     <div class="item-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
                         <span class="item-title" style="font-weight: 600; color: #111827; font-size: 1rem; word-wrap: break-word; overflow-wrap: break-word; flex: 1; min-width: 0;">${title || 'Job Title'}</span>
                         <span class="item-date" style="color: #6b7280; font-size: 0.9rem; font-weight: 500; word-wrap: break-word; overflow-wrap: break-word; flex-shrink: 0;">${duration || 'Duration'}</span>
@@ -356,7 +362,7 @@ function renderEducation() {
         if (degree || institution) {
             anyContent = true;
             const educationHTML = `
-                <div class="education-item slide-up" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 8px; word-wrap: break-word; overflow-wrap: break-word;">
+                <div class="education-item slide-up" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; word-wrap: break-word; overflow-wrap: break-word;">
                     <div class="item-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
                         <span class="item-title" style="font-weight: 600; color: #111827; font-size: 1rem; word-wrap: break-word; overflow-wrap: break-word; flex: 1; min-width: 0;">${degree || 'Degree'}</span>
                         <span class="item-date" style="color: #6b7280; font-size: 0.9rem; font-weight: 500; word-wrap: break-word; overflow-wrap: break-word; flex-shrink: 0;">${duration || 'Year'}</span>
@@ -393,6 +399,16 @@ function addProjects() {
     setTimeout(autoSave, 1000);
 }
 
+function escapeHTML(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function renderProjects() {
     const container = document.getElementById("projectsContainer");
     const preview = document.getElementById("previewProjects");
@@ -401,21 +417,24 @@ function renderProjects() {
     let anyContent = false;
     container.querySelectorAll(".form-group").forEach(group => {
         const inputs = group.querySelectorAll("input, textarea");
-        const title = inputs[0].value;
-        const tech = inputs[1].value;
-        const description = inputs[2].value;
-        const link = inputs[3].value;
+        const title = escapeHTML(inputs[0].value);
+        const tech = escapeHTML(inputs[1].value);
+        const description = escapeHTML(inputs[2].value);
+        const link = escapeHTML(inputs[3].value);
 
         if (title || description) {
             anyContent = true;
+
+            const safeColor = typeof currentThemeColor !== 'undefined' ? currentThemeColor : '#2563eb';
+
             const projectHTML = `
-                <div class="project-item slide-up" style="margin-bottom: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 8px; word-wrap: break-word; overflow-wrap: break-word;">
+                <div class="project-item slide-up" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; word-wrap: break-word; overflow-wrap: break-word;">
                     <div class="item-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
                         <span class="item-title" style="font-weight: 600; color: #111827; font-size: 1rem; word-wrap: break-word; overflow-wrap: break-word; flex: 1; min-width: 0;">${title || 'Project Title'}</span>
-                        ${link ? `<a href="${link}" target="_blank" style="color: ${currentThemeColor}; text-decoration: none; font-size: 0.9rem; word-wrap: break-word; overflow-wrap: break-word; flex-shrink: 0;">View Project →</a>` : ''}
+                        ${link ? `<a href="${link}" target="_blank" rel="noopener noreferrer" style="color: ${safeColor}; text-decoration: none; font-size: 0.9rem; overflow-wrap: break-word; flex-shrink: 0;">View Project →</a>` : ''}
                     </div>
-                    ${tech ? `<div class="item-company" style="color: #374151; font-weight: 500; margin-bottom: 0.5rem; word-wrap: break-word; overflow-wrap: break-word;">Technologies: ${tech}</div>` : ''}
-                    ${description ? `<div style="margin-top: 0.5rem; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">${description}</div>` : ''}
+                    ${tech ? `<div class="item-company" style="color: #374151; font-weight: 500; margin-bottom: 0.5rem; overflow-wrap: break-word;">Technologies: ${tech}</div>` : ''}
+                    ${description ? `<div style="margin-top: 0.5rem; overflow-wrap: break-word; white-space: pre-wrap; line-height: 1.6;">${description}</div>` : ''}
                 </div>
             `;
             preview.innerHTML += projectHTML;
@@ -423,6 +442,141 @@ function renderProjects() {
     });
 
     document.getElementById("projectSection").style.display = anyContent ? "block" : "none";
+}
+
+
+// FIXED: Enhanced customization functions that actually work
+function setThemeColor(color, darkColor) {
+    currentThemeColor = color;
+    currentThemeColorDark = darkColor;
+    
+    // Update CSS custom properties
+    document.documentElement.style.setProperty('--theme-color', color);
+    document.documentElement.style.setProperty('--theme-color-dark', darkColor);
+    
+    // Update active color indicator
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.getAttribute('data-color') === color) {
+            option.classList.add('active');
+        }
+    });
+    
+    // Force update all colored elements
+    updateAllThemeColors();
+}
+
+function setFont(fontFamily) {
+    const resume = document.getElementById('resumePreview');
+    if (resume) {
+        resume.style.fontFamily = fontFamily;
+        
+        // Also update specific text elements
+        const textElements = resume.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div');
+        textElements.forEach(element => {
+            element.style.fontFamily = fontFamily;
+        });
+    }
+    
+    console.log('Font changed to:', fontFamily);
+}
+
+function setFontSize(size) {
+    const resume = document.getElementById('resumePreview');
+    if (resume) {
+        resume.style.fontSize = size + 'px';
+        
+        // Update specific elements that might need size adjustment
+        const nameElement = document.getElementById('previewName');
+        if (nameElement) {
+            nameElement.style.fontSize = (parseInt(size) + 14) + 'px';
+        }
+        
+        const sectionHeaders = resume.querySelectorAll('.resume-section h3');
+        sectionHeaders.forEach(header => {
+            header.style.fontSize = (parseInt(size) + 2) + 'px';
+        });
+    }
+    
+    // Update display
+    document.getElementById('fontSizeDisplay').textContent = size + 'px';
+    
+    console.log('Font size changed to:', size + 'px');
+}
+
+// NEW: Function to update all theme-colored elements
+function updateAllThemeColors() {
+    // Update skill tags in form
+    document.querySelectorAll('.skill-tag').forEach(tag => {
+        tag.style.background = `linear-gradient(135deg, ${currentThemeColor}, ${currentThemeColorDark})`;
+    });
+    
+    // Update skills in preview
+    document.querySelectorAll('.skills-container span').forEach(span => {
+        span.style.background = `linear-gradient(135deg, ${currentThemeColor}, ${currentThemeColorDark})`;
+    });
+    
+    // Update timeline years
+    document.querySelectorAll('.timeline-year').forEach(year => {
+        year.style.background = currentThemeColor;
+    });
+    
+    // Update section borders
+    document.querySelectorAll('.resume-section h3').forEach(header => {
+        header.style.borderBottomColor = currentThemeColor;
+    });
+    
+    // Update experience/education/project borders
+    document.querySelectorAll('.experience-item, .education-item, .project-item').forEach(item => {
+        item.style.borderLeftColor = currentThemeColor;
+    });
+    
+    // Update timeline items
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        item.style.borderTopColor = currentThemeColor;
+    });
+    
+    console.log('Theme colors updated to:', currentThemeColor);
+}
+
+// Enhanced template color update
+function updateTemplateColors(templateClass) {
+    const colorMap = {
+        'template-professional': ['#2d3748', '#1a202c'],
+        'template-modern': ['#118df0', '#2563eb'],
+        'template-minimal': ['#718096', '#4a5568'],
+        'template-executive': ['#8b5fbf', '#7c3aed']
+    };
+    
+    const colors = colorMap[templateClass] || ['#2d3748', '#1a202c'];
+    
+    // Set the theme colors
+    setThemeColor(colors[0], colors[1]);
+}
+
+// Enhanced apply template function
+function applyTemplate(templateClass) {
+    const resume = document.getElementById("resumePreview");
+    
+    // Remove existing template classes
+    resume.className = resume.className.replace(/template-\w+/g, '');
+    
+    // Add new template class
+    resume.classList.add('resume-container', templateClass);
+    
+    // Update theme colors based on template
+    updateTemplateColors(templateClass);
+    
+    // Save template preference
+    localStorage.setItem('selectedTemplate', templateClass);
+    
+    // Force update after template change
+    setTimeout(() => {
+        updateAllThemeColors();
+        updatePreview();
+    }, 100);
+    
+    console.log('Template applied:', templateClass);
 }
 
 // Skills Functions
@@ -923,7 +1077,7 @@ async function downloadResume() {
     
     try {
         // Show loading state
-        downloadBtn.innerHTML = '⏳ Generating PDF...';
+        downloadBtn.innerHTML = 'Generating PDF...';
         downloadBtn.disabled = true;
         downloadBtn.classList.add('loading');
         
@@ -1090,22 +1244,17 @@ setTimeout(() => {
     }
 }, 500);
 
-// Get template name from URL
 const urlParams = new URLSearchParams(window.location.search);
 const selectedTemplate = urlParams.get("template");
 
-// Optional: Fallback template
 const defaultTemplate = "modern";
 const templateToUse = selectedTemplate || defaultTemplate;
 
-// Load the template (you'll define this logic below)
 loadTemplate(templateToUse);
+
 function loadTemplate(templateName) {
-  const preview = document.getElementById("resume-preview"); // or your main resume wrapper
+    const preview = document.getElementById("resumePreview"); // ✅ use the correct ID
 
-  // Clear existing template styles (optional if you're swapping classes)
-  preview.className = "resume-preview"; // reset base class
-
-  // Apply the appropriate class
-  preview.classList.add(`template-${templateName}`);
+    preview.className = "resume-container"; // reset base class
+    preview.classList.add(`template-${templateName}`); // apply template class like "template-modern"
 }
