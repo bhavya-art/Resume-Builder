@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume</title>
+    <title>Resume Builder - Resumix</title>
     <link rel="stylesheet" href="builder.css">
-     <link rel="icon" href="logo.png" type="image/png">
+    <link rel="icon" href="logo.png" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div id="builderpage" class="builder-container">
@@ -21,24 +23,49 @@
                             <option value="template-professional">Professional</option>
                             <option value="template-modern">Modern</option>
                             <option value="template-minimal">Minimal</option>
+                
                         </select>
                     </div>
                 </div>
 
-                
                 <div class="form-section">
                     <h3>Personal Information</h3>
+                    
+                    <div class="form-group photo-section">
+                        <label>Profile Photo</label>
+                        <div class="photo-upload-container">
+                            <input type="file" id="photoUpload" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+                            <div class="photo-preview" id="photoPreview">
+                                <img id="profilePhoto" src="" alt="Profile Photo" style="display: none;">
+                                <div class="photo-placeholder" id="photoPlaceholder" onclick="document.getElementById('photoUpload').click()">
+                                    
+                                    <p>Click to add photo</p>
+                                </div>
+                                <button type="button" class="remove-photo-btn" id="removePhotoBtn" onclick="removePhoto()" style="display: none;">×</button>
+                            </div>
+                            <div class="photo-options">
+                                <label class="photo-toggle">
+                                    <input type="checkbox" id="showPhotoInResume" onchange="updatePreview()" checked>
+                                    <span>Show photo in resume</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Full Name *</label>
-                        <input type="text" id="fullName" placeholder="Enter your full name" oninput="updatePreview()" required>
+                        <input type="text" id="fullName" placeholder="Enter your full name" oninput="updatePreview(); validateField(this)" required>
+                        <div class="error-message" style="display: none;"></div>
                     </div>
                     <div class="form-group">
                         <label>Email *</label>
-                        <input type="email" id="email" placeholder="your.email@example.com" oninput="updatePreview()" required>
+                        <input type="email" id="email" placeholder="your.email@example.com" oninput="updatePreview(); validateField(this)" required>
+                        <div class="error-message" style="display: none;"></div>
                     </div>
                     <div class="form-group">
                         <label>Phone *</label>
-                        <input type="tel" id="phone" placeholder="+91 123-456-7890" oninput="updatePreview()" required>
+                        <input type="tel" id="phone" placeholder="+91 123-456-7890" oninput="updatePreview(); validateField(this)" required>
+                        <div class="error-message" style="display: none;"></div>
                     </div>
                     <div class="form-group">
                         <label>LinkedIn Profile</label>
@@ -60,96 +87,130 @@
                     <div id="experienceContainer"></div>
                     <button class="add-btn" onclick="addExperience()">+ Add Experience</button>
                 </div>
+
                 <div class="form-section">
                     <h3>Education</h3>
                     <div id="educationContainer"></div>
                     <button class="add-btn" onclick="addEducation()">+ Add Education</button>
                 </div>  
+
                 <div class="form-section">
-                    <h3>Projects</h3>
+                    <h3> Projects</h3>
                     <div id="projectsContainer"></div>
                     <button class="add-btn" onclick="addProjects()">+ Add Project</button>
                 </div>
+
                 <div class="form-section">
                     <h3>Skills</h3>
                     <div class="form-group">
                         <label>Add Skills (Press Enter to add)</label>
                         <input type="text" id="skillInput" placeholder="e.g., JavaScript, Project Management, Adobe Photoshop" onkeypress="addSkill(event)">
-                       
                     </div>
                     <div id="skillsList" class="skills-display"></div>
                 </div>
+
+                <!-- Additional Section -->
+                <div class="form-section">
+                    <h3> Additional Information</h3>
+                    <div class="form-group">
+                        <label>Certifications/Awards</label>
+                        <textarea id="additionalInfo" placeholder="Add any certifications, awards, languages, or other relevant information" rows="3" oninput="updatePreview()"></textarea>
+                    </div>
                 </div>
-                </div>
+            </div>
 
             <!-- Right Panel - Preview -->
             <div class="right-panel">
                 <div class="top-bar">
                     <h3>Resume Preview</h3>
                     <div class="action-buttons">
-                        <button class="action-btn" onclick="resetForm()" title="Clear All">Clear</button>
-                        <button class="action-btn" onclick="saveResume()" title="Save Draft">Save</button>
-                        <button class="download-btn" onclick="downloadResume()">Download PDF</button>
+                        <button class="action-btn" onclick="resetForm()" title="Clear All"> Clear</button>
+                        <button class="action-btn" onclick="saveResume()" title="Save Draft"> Save</button>
+                        <button class="download-btn" onclick="downloadResume()"> Download PDF</button>
                     </div>
+                </div>
+
+                <!-- Page Size Indicator -->
+                <div class="page-indicator" id="pageIndicator">
+                    <span>Page 1 of 1</span>
                 </div>
 
                 <div class="preview-area">
                     <div class="resume-container template-professional" id="resumePreview">
                         <!-- Header -->
                         <div class="resume-header">
-                            <h1 class="resume-name" id="previewName">Your Name</h1>
-                            <div class="resume-contact" id="previewContact">
-                                <span id="previewEmail">your.email@example.com</span>
-                                <span id="previewPhone">+91 123-456-7890</span>
-                                <span id="previewLinkedin" style="display: none;"></span>
-                                <span id="previewLocation" style="display: none;"></span>
+                            <div class="header-content">
+                                <div class="profile-photo-container" id="profilePhotoContainer" style="display: none;">
+                                    <img id="resumeProfilePhoto" src="" alt="Profile Photo">
+                                </div>
+                                <div class="header-text">
+                                    <h1 class="resume-name" id="previewName">Your Name</h1>
+                                    <div class="resume-contact" id="previewContact">
+                                        <span id="previewEmail">your.email@example.com</span>
+                                        <span id="previewPhone">+91 123-456-7890</span>
+                                        <span id="previewLinkedin" style="display: none;"></span>
+                                        <span id="previewLocation" style="display: none;"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Professional Summary -->
                         <div class="resume-section" id="summarySection" style="display: none;">
                             <h3>Professional Summary</h3>
                             <p id="previewSummary"></p>
                         </div>
 
-                        <!-- Work Experience -->
                         <div class="resume-section" id="experienceSection" style="display: none;">
                             <h3>Work Experience</h3>
                             <div id="previewExperience"></div>
                         </div>
 
-                        <!-- Education -->
                         <div class="resume-section" id="educationSection" style="display: none;">
                             <h3>Education</h3>
                             <div id="previewEducation"></div>
                         </div>
 
-                        <!-- Projects -->
                         <div class="resume-section" id="projectSection" style="display: none;">
                             <h3>Projects</h3>
                             <div id="previewProjects"></div>
                         </div>
 
-                        <!-- Skills -->
                         <div class="resume-section" id="skillsSection" style="display: none;">
                             <h3>Skills</h3>
                             <div class="skills-container" id="previewSkills"></div>
                         </div>
 
-                        <!-- Awards -->
-                        <div class="resume-section" id="awardsSection" style="display: none;">
-                            <h3>Awards & Certifications</h3>
-                            <div id="previewAwards"></div>
+                        <div class="resume-section" id="additionalSection" style="display: none;">
+                            <h3>Additional Information</h3>
+                            <div id="previewAdditional"></div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Career Timeline -->
+                <div class="timeline-section" id="timelineSection">
+                    <h4>🕒 Your Career Timeline</h4>
+                    <div class="timeline-container" id="timelineContainer">
+                        <p class="timeline-placeholder">Add work experience to see your career timeline</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="builder.js"></script>
-</body>
+    <!-- Success Modal -->
+    <div id="successModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✅ Success!</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Operation completed successfully!</p>
+            </div>
+        </div>
+    </div>
 
-        <script src="builder.js"></script>
+    <script src="builder.js"></script>
 </body>
 </html>
