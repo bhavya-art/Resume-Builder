@@ -120,7 +120,7 @@
           <div class="template-info">
             <h3>Classic Executive</h3>
             <p>Traditional format ideal for senior management positions</p>
-            <a href="builderpage.html?template=professional" class="template-btn">Use Template</a>
+            <a href="builderpage.html?template=executive" class="template-btn">Use Template</a>
 
           </div>
         </div>
@@ -259,26 +259,27 @@
     </div>
     
     <script>
-    let currentIndex = 0;
-  const track = document.querySelector(".carousel-track");
-  const cards = document.querySelectorAll(".template-card");
-  const totalSlides = cards.length;
-
-  function updateCarousel() {
-    const offset = -currentIndex * 100;
-    track.style.transform = `translateX(${offset}%)`;
-  }
-
-  function nextSlide() {
-    currentIndex = (currentIndex + 1) % totalSlides;
-    updateCarousel();
-  }
-
-  function prevSlide() {
-    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-    updateCarousel();
-  }
-  </script>
+        let currentIndex = 0;
+        const track = document.querySelector(".carousel-track");
+        const cards = document.querySelectorAll(".template-card");
+        const totalSlides = cards.length;
+    
+        function updateCarousel() {
+            const offset = -currentIndex * 100;
+            track.style.transform = `translateX(${offset}%)`;
+        }
+    
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateCarousel();
+        }
+    
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+        
+    </script>
 </body>
 
 </html>

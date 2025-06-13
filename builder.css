@@ -62,6 +62,27 @@ body {
     color: #2d3748;
     margin-bottom: 1rem;
 }
+/* Font loading */
+.font-loading {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    visibility: hidden;
+}
+
+/* Ensure fonts apply to all resume elements */
+.resume-container {
+    font-family: inherit;
+}
+
+.resume-container * {
+    font-family: inherit;
+}
+
+/* Template-specific overrides can use this attribute */
+[data-preserve-font] {
+    font-family: inherit !important;
+}
 
 /* Color Palette - Exact from image */
 .color-palette {
@@ -129,7 +150,7 @@ body {
 }
 
 .font-dropdown:hover {
-    border-color: #bd5e0;
+    border-color: #111827;
 }
 
 /* Font Size Control - Exact from image */
@@ -504,7 +525,56 @@ body {
 }
 
 
-
+/* Print-specific styles */
+@media print {
+    /* Hide UI elements */
+    .left-panel, .top-bar, .page-indicator, .timeline-section, .page-break-indicator {
+        display: none !important;
+    }
+    
+    .right-panel {
+        width: 100% !important;
+    }
+    
+    .preview-area {
+        padding: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+        overflow: visible !important;
+        max-height: none !important;
+    }
+    
+    .resume-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    /* Proper page breaks */
+    .resume-section {
+        page-break-inside: avoid !important;
+    }
+    
+    .resume-header {
+        page-break-before: always !important;
+        page-break-after: avoid !important;
+    }
+    
+    /* Ensure links display properly */
+    a {
+        text-decoration: underline !important;
+        color: #0366d6 !important;
+    }
+    
+    /* Ensure all text is dark enough for printing */
+    body, p, div, span, h1, h2, h3, h4, h5, h6 {
+        color: black !important;
+    }
+}
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .color-palette {
@@ -1118,6 +1188,70 @@ body {
     margin: 0;
     color: #4b5563;
     line-height: 1.6;
+}
+/* Improved word wrap and overflow handling */
+.resume-container {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    max-width: 794px; /* A4 width */
+    margin: 0 auto;
+}
+
+
+.resume-container {
+    position: relative; /* Important for absolute positioning of page break indicators */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    max-width: 794px; /* A4 width */
+    margin: 0 auto;
+}
+
+.page-break-indicator {
+    margin: 0;
+    background-color: transparent;
+    pointer-events: none;
+    z-index: 10; /* Lower z-index to be behind content */
+}
+
+/* Ensure all content sections have higher z-index */
+.resume-header, .resume-section {
+    position: relative;
+    z-index: 20; /* Higher z-index to be above page break indicators */
+}
+
+.preview-area {
+    position: relative; /* Ensure this is set for absolute positioning of children */
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+.page-break-indicator {
+    margin: 0;
+    background-color: transparent;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* Improve spacing for PDF generation */
+@media print {
+    .resume-container {
+        padding: 20mm !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+    }
+    
+    .resume-section {
+        page-break-inside: avoid !important;
+    }
 }
 
 /* Page Break Handling */
