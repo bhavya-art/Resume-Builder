@@ -1,15 +1,53 @@
 let isSaved = true;
-let currentThemeColor = currentThemeColor || '#2563eb';  // fallback blue
-
-// Initialize the builder
+// Initialize theme color variables
+let currentThemeColor = '#2d3748';  // Default dark blue-gray
+let currentThemeColorDark = '#1a202c';  // Darker shade
 document.addEventListener('DOMContentLoaded', function() {
-    handleTemplateFromURL();
+    // Get the template from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateParam = urlParams.get('template');
+    
+    if (templateParam) {
+        console.log("Template from URL:", templateParam); // Debugging
+        
+        // Define mapping between URL parameters and template class names
+        const templateMap = {
+            'modern': 'template-modern',
+            'executive': 'template-professional', 
+            'minimal': 'template-minimal'
+        };
+        
+        // Get the class name based on the parameter
+        const templateClass = templateMap[templateParam];
+        console.log("Template class to apply:", templateClass); // Debugging
+        
+        if (templateClass) {
+            // Get the dropdown element
+            const templateSelect = document.getElementById('templateSelect');
+            
+            // Set the dropdown selection
+            if (templateSelect) {
+                console.log("Setting dropdown to:", templateClass); // Debugging
+                templateSelect.value = templateClass;
+                
+                // Apply the template
+                applyTemplate(templateClass);
+            } else {
+                console.error("Template select dropdown not found!"); // Debugging
+            }
+        } else {
+            console.error("Invalid template parameter:", templateParam); // Debugging
+        }
+    }
+    
+    // Continue with other initialization
     loadSavedData();
     updatePreview();
     setupValidation();
     checkPageSize();
     initializeTimeline();
-    
+    initializePageScroll();
+    loadWebFonts();
     // Auto-save every 30 seconds
     setInterval(autoSave, 30000);
 });
@@ -41,24 +79,25 @@ function applyTemplate(templateClass) {
     resume.classList.add(templateClass);
 }
 
-
 function handleTemplateFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const template = urlParams.get('template');
-
+    
     if (template) {
         const templateMap = {
             'modern': 'template-modern',
+            'executive': 'template-professional', 
             'minimal': 'template-minimal',
-            'executive': 'template-professional'
         };
-
-        const templateClass = templateMap[template] || 'template-modern';
-
-        const resumePreview = document.getElementById("resume-preview");
-        if (resumePreview) {
-            resumePreview.className = "resume-preview"; // Reset
-            resumePreview.classList.add(templateClass); // Apply selected
+        
+        const templateClass = templateMap[template] || 'template-professional';
+        
+        const templateSelect = document.getElementById('templateSelect');
+        if (templateSelect) {
+            // Set the dropdown value to match the template class
+            templateSelect.value = templateClass;
+            // Apply the template
+            applyTemplate(templateClass);
         }
     }
 }
@@ -445,7 +484,6 @@ function renderProjects() {
 }
 
 
-// FIXED: Enhanced customization functions that actually work
 function setThemeColor(color, darkColor) {
     currentThemeColor = color;
     currentThemeColorDark = darkColor;
@@ -467,18 +505,98 @@ function setThemeColor(color, darkColor) {
 }
 
 function setFont(fontFamily) {
+    // Make sure to use web-safe font families with appropriate fallbacks
+    const fontMap = {
+        "'Segoe UI', sans-serif": "'Segoe UI', Arial, sans-serif",
+        "'Inter', sans-serif": "'Inter', 'Segoe UI', Arial, sans-serif",
+        "'Roboto', sans-serif": "'Roboto', 'Helvetica Neue', Arial, sans-serif",
+        "'Poppins', sans-serif": "'Poppins', 'Segoe UI', Arial, sans-serif",
+        "'Lato', sans-serif": "'Lato', 'Helvetica Neue', Arial, sans-serif",
+        "'Montserrat', sans-serif": "'Montserrat', 'Segoe UI', Arial, sans-serif",
+        "'Open Sans', sans-serif": "'Open Sans', 'Segoe UI', Arial, sans-serif",
+        "'Nunito', sans-serif": "'Nunito', 'Segoe UI', Arial, sans-serif",
+        "'Source Sans Pro', sans-serif": "'Source Sans Pro', 'Segoe UI', Arial, sans-serif",
+        "'Raleway', sans-serif": "'Raleway', 'Segoe UI', Arial, sans-serif",
+        "'Times New Roman', serif": "'Times New Roman', Times, serif",
+        "'Georgia', serif": "'Georgia', Times, serif",
+        "'Merriweather', serif": "'Merriweather', Georgia, serif",
+        "'Playfair Display', serif": "'Playfair Display', Georgia, serif",
+        "'Garamond', serif": "'Garamond', 'Times New Roman', serif"
+    };
+    
+    // Get the full font stack with fallbacks
+    const fontStack = fontMap[fontFamily] || fontFamily;
+    
+    // First, ensure we're loading the font if it's not a system font
+    ensureFontIsLoaded(fontFamily);
+    
+    // Apply to the resume container
     const resume = document.getElementById('resumePreview');
     if (resume) {
-        resume.style.fontFamily = fontFamily;
+        console.log('Setting font to:', fontStack);
+        resume.style.fontFamily = fontStack;
         
-        // Also update specific text elements
-        const textElements = resume.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div');
-        textElements.forEach(element => {
-            element.style.fontFamily = fontFamily;
+        // Apply to specific elements to ensure proper inheritance
+        const elements = resume.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div, li');
+        elements.forEach(element => {
+            // Don't override font-family if it's explicitly set in a template
+            if (!element.hasAttribute('data-preserve-font')) {
+                element.style.fontFamily = fontStack;
+            }
+        });
+        
+        // Store the selected font
+        localStorage.setItem('selectedFont', fontFamily);
+    }
+    
+    // Update the font selector to reflect the current choice
+    const fontSelector = document.getElementById('fontSelector');
+    if (fontSelector && fontSelector.value !== fontFamily) {
+        fontSelector.value = fontFamily;
+    }
+}
+
+
+// Function to ensure web fonts are loaded
+function ensureFontIsLoaded(fontFamily) {
+    // Extract the primary font name without quotes and sans-serif/serif part
+    const fontName = fontFamily.split(',')[0].replace(/['""]/g, '').trim();
+    
+    // Skip system fonts that don't need loading
+    const systemFonts = ['Segoe UI', 'Arial', 'Helvetica', 'Times New Roman', 'Times', 'Georgia'];
+    if (systemFonts.includes(fontName)) return;
+    
+    // Check if we've already attempted to load this font
+    if (document.querySelector(`link[data-font="${fontName}"]`)) return;
+    
+    // Dynamically load the font from Google Fonts
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;500;700&display=swap`;
+    link.dataset.font = fontName;
+    document.head.appendChild(link);
+    
+    console.log(`Loading font: ${fontName} from Google Fonts`);
+}
+
+function loadWebFonts() {
+    // Get all the options from the font selector
+    const fontSelector = document.getElementById('fontSelector');
+    if (fontSelector) {
+        const options = fontSelector.querySelectorAll('option');
+        options.forEach(option => {
+            const fontFamily = option.value;
+            ensureFontIsLoaded(fontFamily);
         });
     }
     
-    console.log('Font changed to:', fontFamily);
+    // Load the saved font preference if any
+    const savedFont = localStorage.getItem('selectedFont');
+    if (savedFont) {
+        setTimeout(() => {
+            setFont(savedFont);
+        }, 100);
+    }
 }
 
 function setFontSize(size) {
@@ -504,7 +622,6 @@ function setFontSize(size) {
     console.log('Font size changed to:', size + 'px');
 }
 
-// NEW: Function to update all theme-colored elements
 function updateAllThemeColors() {
     // Update skill tags in form
     document.querySelectorAll('.skill-tag').forEach(tag => {
@@ -530,14 +647,14 @@ function updateAllThemeColors() {
     document.querySelectorAll('.experience-item, .education-item, .project-item').forEach(item => {
         item.style.borderLeftColor = currentThemeColor;
     });
-    
-    // Update timeline items
-    document.querySelectorAll('.timeline-item').forEach(item => {
+     // Update timeline items
+     document.querySelectorAll('.timeline-item').forEach(item => {
         item.style.borderTopColor = currentThemeColor;
     });
     
     console.log('Theme colors updated to:', currentThemeColor);
 }
+ 
 
 // Enhanced template color update
 function updateTemplateColors(templateClass) {
@@ -545,7 +662,7 @@ function updateTemplateColors(templateClass) {
         'template-professional': ['#2d3748', '#1a202c'],
         'template-modern': ['#118df0', '#2563eb'],
         'template-minimal': ['#718096', '#4a5568'],
-        'template-executive': ['#8b5fbf', '#7c3aed']
+       
     };
     
     const colors = colorMap[templateClass] || ['#2d3748', '#1a202c'];
@@ -657,15 +774,16 @@ function updateTimeline() {
     timelineContainer.innerHTML = '';
     
     experiences.forEach(exp => {
-        if (exp.title && exp.company && exp.duration) {
+        if (exp.title && exp.company) {
             const timelineItem = document.createElement('div');
             timelineItem.className = 'timeline-item fade-in';
             
-            // Extract year from duration
-            const year = exp.duration.match(/\d{4}/)?.[0] || 'Present';
+            // Use the full duration as provided by the user
+            // If empty, default to "Present"
+            const displayDate = exp.duration && exp.duration.trim() !== '' ? exp.duration : 'Present';
             
             timelineItem.innerHTML = `
-                <div class="timeline-year">${year}</div>
+                <div class="timeline-year">${displayDate}</div>
                 <div class="timeline-content">
                     <div class="timeline-title">${exp.title}</div>
                     <div class="timeline-company">${exp.company}</div>
@@ -695,16 +813,28 @@ function collectExperienceData() {
 }
 
 // Page Size Check
+// First, update the checkPageSize function to properly detect and visualize page breaks
 function checkPageSize() {
     const resumeContainer = document.getElementById("resumePreview");
     const pageIndicator = document.getElementById("pageIndicator");
     
-    // Rough calculation for A4 page size
-    const a4Height = 1120; // Approximate A4 height in pixels at normal zoom
+    // A4 page size in pixels (approximately at 96 DPI)
+    const a4Height = 1123; // A4 height (297mm at 96 DPI)
+    const a4Width = 794;   // A4 width (210mm at 96 DPI)
+    
+    // Set width constraint to prevent content from going off-page
+    resumeContainer.style.maxWidth = `${a4Width}px`;
+    resumeContainer.style.margin = '0 auto';
+    
+    // Get current height
     const currentHeight = resumeContainer.scrollHeight;
     const pages = Math.ceil(currentHeight / a4Height);
     
+    // Update page indicator
     pageIndicator.innerHTML = `<span>Page ${pages > 1 ? `1 of ${pages}` : '1 of 1'}</span>`;
+    
+    // Call function to visualize page breaks
+    visualizePageBreaks(resumeContainer, a4Height, pages);
     
     // Show warning if content exceeds one page
     const existingWarning = document.querySelector('.page-overflow-warning');
@@ -712,7 +842,7 @@ function checkPageSize() {
         const warning = document.createElement('div');
         warning.className = 'page-overflow-warning';
         warning.innerHTML = `
-            ⚠️ Content exceeds one page (${pages} pages). Consider removing some sections for better readability.
+            ⚠ Content exceeds one page (${pages} pages). Consider removing some sections for better readability.
             <button onclick="this.parentElement.remove()" style="margin-left: 10px; background: none; border: none; color: inherit; cursor: pointer;">×</button>
         `;
         document.body.appendChild(warning);
@@ -726,6 +856,83 @@ function checkPageSize() {
     } else if (pages === 1 && existingWarning) {
         existingWarning.remove();
     }
+    
+    return pages;
+}
+function initializePageScroll() {
+    const previewArea = document.querySelector('.preview-area');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const resumeContainer = document.getElementById('resumePreview');
+    
+    // A4 height in pixels
+    const a4Height = 1123;
+    
+    previewArea.addEventListener('scroll', function() {
+        // Get the scroll position
+        const scrollTop = previewArea.scrollTop;
+        
+        // Calculate which page we're viewing based on scroll position
+        const containerTop = resumeContainer.offsetTop - previewArea.offsetTop;
+        const relativeScrollTop = scrollTop - containerTop;
+        const currentPage = Math.floor(relativeScrollTop / a4Height) + 1;
+        
+        // Get total pages
+        const totalPages = Math.ceil(resumeContainer.scrollHeight / a4Height);
+        
+        // Make sure currentPage is between 1 and totalPages
+        const validatedPage = Math.max(1, Math.min(currentPage, totalPages));
+        
+        // Update the page indicator
+        pageIndicator.innerHTML = `<span>Page ${validatedPage} of ${totalPages}</span>`;
+    });
+}
+
+function visualizePageBreaks(container, pageHeight, totalPages) {
+    // Remove any existing page break indicators
+    const existingIndicators = document.querySelectorAll('.page-break-indicator');
+    existingIndicators.forEach(indicator => indicator.remove());
+    
+    // If only one page, no need for indicators
+    if (totalPages <= 1) return;
+    
+    // Get the resume sections to better position the page breaks
+    const sections = container.querySelectorAll('.resume-section');
+    
+    // Create page break indicators
+    for (let i = 1; i < totalPages; i++) {
+        const breakPosition = i * pageHeight;
+        
+        // Create the indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'page-break-indicator';
+        indicator.style.position = 'absolute';
+        indicator.style.left = '0';
+        indicator.style.right = '0';
+        indicator.style.top = `${breakPosition}px`;
+        indicator.style.width = '100%';
+        indicator.style.borderTop = '2px dashed rgba(75, 85, 99, 0.5)';
+        indicator.style.textAlign = 'center';
+        indicator.style.zIndex = '10';
+        indicator.style.pointerEvents = 'none';
+        
+        // Create the label with semi-transparent background
+        const label = document.createElement('span');
+        label.style.background = 'rgba(255, 255, 255, 0.7)';
+        label.style.color = 'rgba(75, 85, 99, 0.8)';
+        label.style.fontSize = '12px';
+        label.style.fontWeight = 'bold';
+        label.style.padding = '0 10px';
+        label.style.borderRadius = '4px';
+        label.textContent = `PAGE ${i+1} STARTS HERE`;
+        
+        indicator.appendChild(label);
+        
+        // Append to the container itself
+        container.appendChild(indicator);
+    }
+    
+    // Update page indicator scroll handler
+    initializePageScroll();
 }
 
 // Remove Section Function
@@ -1069,101 +1276,330 @@ function resetForm() {
     showModal('Success', 'Form cleared successfully! You can start fresh with your resume.');
 }
 
-// Enhanced Download Resume with proper PDF generation
-// FIXED: Download Resume with only success alert
 async function downloadResume() {
     const downloadBtn = document.querySelector('.download-btn');
     const originalText = downloadBtn.innerHTML;
     
     try {
         // Show loading state
-        downloadBtn.innerHTML = 'Generating PDF...';
+        downloadBtn.innerHTML = 'Preparing PDF...';
         downloadBtn.disabled = true;
-        downloadBtn.classList.add('loading');
         
-        // Save before download (no validation required)
+        // Save current data
         const resumeData = collectAllData();
         localStorage.setItem("resumeData", JSON.stringify(resumeData));
         
-        // Use jsPDF for better PDF generation
-        const { jsPDF } = window.jspdf;
+        // Get name for filename
+        const name = document.getElementById("fullName").value || "Resume";
+        const filename = `${name.replace(/\s+/g, '_')}_Resume.pdf`;
+        
+        // Create a new window specifically for clean PDF printing
+        const printWindow = window.open('', '_blank');
+        
+        if (!printWindow) {
+            throw new Error('Popup blocked. Please allow popups for this site.');
+        }
+        
+        // Get the resume content
         const resumeElement = document.getElementById("resumePreview");
         
-        // Create canvas from resume
-        const canvas = await html2canvas(resumeElement, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: '#ffffff',
-            logging: false,
-            onclone: function(clonedDoc) {
-                const clonedElement = clonedDoc.getElementById('resumePreview');
-                if (clonedElement) {
-                    clonedElement.style.transform = 'scale(1)';
-                    clonedElement.style.width = '800px';
-                }
-            }
-        });
+        // Create clean HTML for printing
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${name} - Resume</title>
+                <style>
+                    /* Reset and base styles */
+                    * {
+                        box-sizing: border-box;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    
+                    body {
+                        font-family: 'Segoe UI', Arial, sans-serif;
+                        line-height: 1.5;
+                        color: #000;
+                        background: white;
+                        width: 100%;
+                        height: 100%;
+                        padding: 0;
+                        margin: 0;
+                    }
+                    
+                    /* Page layout */
+                    .resume-page {
+                        width: 210mm;
+                        min-height: 297mm;
+                        padding: 20mm;
+                        margin: 0 auto;
+                        background: white;
+                        position: relative;
+                    }
+                    
+                    /* Header styles */
+                    .resume-header {
+                        margin-bottom: 20px;
+                        border-bottom: 1px solid #ddd;
+                        padding-bottom: 20px;
+                    }
+                    
+                    .header-content {
+                        display: flex;
+                        align-items: center;
+                    }
+                    
+                    .profile-photo-container {
+                        width: 100px;
+                        height: 100px;
+                        margin-right: 20px;
+                    }
+                    
+                    .profile-photo-container img {
+                        width: 100px;
+                        height: 100px;
+                        object-fit: cover;
+                
+                    }
+                    
+                    .header-text {
+                        flex: 1;
+                    }
+                    
+                    .resume-name {
+                        font-size: 32px;
+                        font-weight: bold;
+                        margin-bottom: 5px;
+                        color: #000;
+                    }
+                    
+                    .resume-contact {
+                        font-size: 14px;
+                        color: #333;
+                    }
+                    
+                    .resume-contact span {
+                        margin-right: 10px;
+                    }
+                    
+                    /* Section styles */
+                    .resume-section {
+                        margin-bottom: 20px;
+                        page-break-inside: avoid;
+                    }
+                    
+                    .resume-section h3 {
+                        font-size: 18px;
+                        color: #333;
+                        text-transform: uppercase;
+                        margin-bottom: 15px;
+                        border-bottom: 1px solid #ddd;
+                        padding-bottom: 5px;
+                    }
+                    
+                    /* Item styles */
+                    .experience-item, .education-item, .project-item {
+                        margin-bottom: 15px;
+                    }
+                    
+                    .item-header {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .item-title {
+                        font-weight: bold;
+                        color: #000;
+                    }
+                    
+                    .item-date {
+                        color: #666;
+                    }
+                    
+                    .item-company, .item-institution {
+                        font-weight: 500;
+                        margin-bottom: 5px;
+                    }
+                    
+                    /* Skills */
+                    .skills-container {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                    }
+                    
+                    .skills-container span {
+                        background: #f0f0f0;
+                        color: #333;
+                        padding: 5px 10px;
+                        border-radius: 15px;
+                        font-size: 14px;
+                    }
+                    
+                    /* Links */
+                    a {
+                        color: #0366d6;
+                        text-decoration: underline;
+                    }
+                    
+                    /* Print settings */
+                    @media print {
+                        @page {
+                            size: A4 portrait;
+                            margin: 0;
+                        }
+                        
+                        body, html {
+                            width: 210mm;
+                            height: 297mm;
+                        }
+                        
+                        .resume-page {
+                            width: 210mm;
+                            min-height: 297mm;
+                            box-shadow: none;
+                            margin: 0;
+                            padding: 20mm;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="resume-page">
+                    <!-- Header -->
+                    <div class="resume-header">
+                        <div class="header-content">
+                            ${document.getElementById("profilePhotoContainer").style.display !== 'none' ? 
+                              `<div class="profile-photo-container">
+                                <img src="${document.getElementById("resumeProfilePhoto").src}" alt="Profile Photo">
+                              </div>` : ''}
+                            <div class="header-text">
+                                <h1 class="resume-name">${document.getElementById("previewName").innerText}</h1>
+                                <div class="resume-contact">
+                                    ${document.getElementById("previewEmail").innerText ? 
+                                      `<span>${document.getElementById("previewEmail").innerText}</span>` : ''}
+                                    ${document.getElementById("previewPhone").innerText ? 
+                                      `<span>${document.getElementById("previewPhone").innerText}</span>` : ''}
+                                    ${document.getElementById("previewLinkedin").style.display !== 'none' ? 
+                                      `<span>${document.getElementById("previewLinkedin").innerHTML}</span>` : ''}
+                                    ${document.getElementById("previewLocation").style.display !== 'none' ? 
+                                      `<span>${document.getElementById("previewLocation").innerText}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Summary -->
+                    ${document.getElementById("summarySection").style.display !== 'none' ? 
+                      `<div class="resume-section">
+                        <h3>Professional Summary</h3>
+                        <p>${document.getElementById("previewSummary").innerText}</p>
+                      </div>` : ''}
+                    
+                    <!-- Experience -->
+                    ${document.getElementById("experienceSection").style.display !== 'none' ? 
+                      `<div class="resume-section">
+                        <h3>Work Experience</h3>
+                        ${document.getElementById("previewExperience").innerHTML}
+                      </div>` : ''}
+                    
+                    <!-- Education -->
+                    ${document.getElementById("educationSection").style.display !== 'none' ? 
+                      `<div class="resume-section">
+                        <h3>Education</h3>
+                        ${document.getElementById("previewEducation").innerHTML}
+                      </div>` : ''}
+                    
+                    <!-- Projects -->
+                    ${document.getElementById("projectSection").style.display !== 'none' ? 
+                      `<div class="resume-section">
+                        <h3>Projects</h3>
+                        ${document.getElementById("previewProjects").innerHTML}
+                      </div>` : ''}
+                    
+                    <!-- Skills -->
+                    ${document.getElementById("skillsSection").style.display !== 'none' ? 
+                      `<div class="resume-section">
+                        <h3>Skills</h3>
+                        <div class="skills-container">
+                          ${document.getElementById("previewSkills").innerHTML}
+                        </div>
+                      </div>` : ''}
+                    
+                    <!-- Additional Info -->
+                    ${document.getElementById("additionalSection").style.display !== 'none' ? 
+                      `<div class="resume-section">
+                        <h3>Additional Information</h3>
+                        ${document.getElementById("previewAdditional").innerHTML}
+                      </div>` : ''}
+                </div>
+                
+                <script>
+                    // Wait for images to load then print
+                    window.onload = function() {
+                        // Make sure images are loaded
+                        const images = document.querySelectorAll('img');
+                        let loadedImages = 0;
+                        
+                        if (images.length === 0) {
+                            setTimeout(printPage, 500);
+                        } else {
+                            images.forEach(img => {
+                                if (img.complete) {
+                                    loadedImages++;
+                                    if (loadedImages === images.length) {
+                                        setTimeout(printPage, 500);
+                                    }
+                                } else {
+                                    img.onload = function() {
+                                        loadedImages++;
+                                        if (loadedImages === images.length) {
+                                            setTimeout(printPage, 500);
+                                        }
+                                    };
+                                    img.onerror = function() {
+                                        loadedImages++;
+                                        if (loadedImages === images.length) {
+                                            setTimeout(printPage, 500);
+                                        }
+                                    };
+                                }
+                            });
+                        }
+                    };
+                    
+                    function printPage() {
+                        window.print();
+                        setTimeout(function() {
+                            window.close();
+                        }, 500);
+                    }
+                </script>
+            </body>
+            </html>
+        `);
         
-        const imgData = canvas.toDataURL('image/png', 1.0);
+        printWindow.document.close();
         
-        // Create PDF
-        const pdf = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: 'a4'
-        });
-        
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        
-        const ratio = Math.min(pdfWidth / (imgWidth * 0.264583), pdfHeight / (imgHeight * 0.264583));
-        const imgX = (pdfWidth - imgWidth * 0.264583 * ratio) / 2;
-        const imgY = 5;
-        
-        pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * 0.264583 * ratio, imgHeight * 0.264583 * ratio);
-        
-        // Generate filename
-        const name = document.getElementById("fullName").value || "Resume";
-        const date = new Date().toISOString().split('T')[0];
-        const filename = `${name.replace(/\s+/g, '_')}_Resume_${date}.pdf`;
-        
-        // Download
-        pdf.save(filename);
-        
-        // Show success modal
-        showModal('Success', `Resume downloaded successfully as ${filename}!`);
-        
-        // Visual feedback
-        downloadBtn.innerHTML = '✅ Downloaded';
-        downloadBtn.style.background = '#10b981';
-        
+        // Show success message
         setTimeout(() => {
+            showModal('Success', 'Your resume has been prepared for download. Please save it as a PDF.');
+            
             downloadBtn.innerHTML = originalText;
-            downloadBtn.style.background = '';
             downloadBtn.disabled = false;
-            downloadBtn.classList.remove('loading');
-        }, 2000);
+        }, 1000);
         
     } catch (error) {
-        console.error('Download error:', error);
+        console.error('Print error:', error);
         
-        // Error feedback without modal - just visual
-        downloadBtn.innerHTML = '❌ Failed';
-        downloadBtn.style.background = '#ef4444';
+        // Show error message
+        showModal('Error', 'Could not prepare PDF. Please try again.');
         
-        setTimeout(() => {
-            downloadBtn.innerHTML = originalText;
-            downloadBtn.style.background = '';
-            downloadBtn.disabled = false;
-            downloadBtn.classList.remove('loading');
-        }, 3000);
-        
-        // Fallback to print after showing error
-        setTimeout(() => {
-            window.print();
-        }, 1000);
+        // Reset button
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
     }
 }
 
